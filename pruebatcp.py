@@ -4,7 +4,7 @@ import socket
 # Configuración de la red Wi-Fi
 ssid = "MiRedWiFi"
 password = "pepe1234"
-interfaz = "wlp0s20f3"  # Cambia esto al nombre de tu interfaz Wi-Fi
+interfaz = "wlan0"  # Cambia esto al nombre de tu interfaz Wi-Fi
 tcp_port = 5000  # Puerto TCP para recibir paquetes
 
 def crear_punto_acceso(ssid, password, interfaz):
