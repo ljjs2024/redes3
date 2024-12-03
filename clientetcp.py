@@ -1,7 +1,7 @@
 import socket
 
 # Configuración del cliente
-ip_servidor = "10.42.0.1"  # Cambia esto a la IP del servidor
+ip_servidor = "localhost"  # Cambia esto a la IP del servidor
 puerto_servidor = 5000  # Debe coincidir con el puerto del servidor
 
 def enviar_mensaje(mensaje):
