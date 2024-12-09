@@ -1,6 +1,6 @@
 import red
 import servidortcp
-
+import Wireshark
 
 ssid = "MiRedWiFi"
 password = "pepe1234"
@@ -10,6 +10,7 @@ def main():
     print("Ejecutando proyecto de redes...")
     red.crear_punto_acceso()
     servidortcp.servidor_tcp()
+    Wireshark.analizar_paquete()
     
     
     
