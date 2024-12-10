@@ -1,14 +1,9 @@
-# Usar una imagen base de Python
 FROM python:3.12-slim
 
-# Configurar el directorio de trabajo
+# Instalar las dependencias necesarias
 WORKDIR /app
+COPY . /app
+RUN pip install -r requirements.txt
 
-# Copiar los archivos al contenedor
-COPY . .
-
-# Instalar las dependencias (si hay un archivo requirements.txt)
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Default command
+# Ejecutar la aplicación
 CMD ["python", "main.py"]

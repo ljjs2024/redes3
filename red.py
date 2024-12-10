@@ -1,37 +1,35 @@
-import subprocess
+import pywifi
+from pywifi import const
+import time
 
-# Configuración de la red Wi-Fi
-ssid = "MiRedWiFi"
-password = "pepe1234"
-interfaz = "wlp0s20f3"  # Cambia esto al nombre de tu interfaz Wi-Fi
+def configurar_punto_acceso(ssid, password):
+    wifi = pywifi.PyWiFi()
+    iface = wifi.interfaces()[0]  # Obtén la primera interfaz Wi-Fi disponible
 
-def crear_punto_acceso(ssid, password, interfaz):
-    try:
-        # Crear el punto de acceso usando nmcli
-        subprocess.run(
-            [ "nmcli", "dev", "wifi", "hotspot", 
-             "ifname", interfaz, 
-             "ssid", ssid, 
-             "password", password], 
-            check=True
-        )
-        print(f"Punto de acceso '{ssid}' creado exitosamente.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error al crear el punto de acceso: {e}")
+    # Desconectar cualquier conexión existente
+    iface.disconnect()
+    time.sleep(1)
+    if iface.status() in [const.IFACE_DISCONNECTED, const.IFACE_INACTIVE]:
+        print("Interfaz Wi-Fi desconectada correctamente.")
 
-def detener_punto_acceso(ssid):
-    try:
-        # Detener el punto de acceso
-        subprocess.run(
-            ["nmcli", "connection", "down", "id", ssid], 
-            check=True
-        )
-        print(f"Punto de acceso '{ssid}' detenido exitosamente.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error al detener el punto de acceso: {e}")
+    # Configuración del punto de acceso
+    profile = pywifi.Profile()
+    profile.ssid = ssid
+    profile.auth = const.AUTH_ALG_OPEN
+    profile.akm.append(const.AKM_TYPE_WPA2PSK)
+    profile.cipher = const.CIPHER_TYPE_CCMP
+    profile.key = password
 
-# Crear el punto de acceso
-crear_punto_acceso(ssid, password, interfaz)
+    # Eliminar perfiles antiguos y agregar el nuevo
+    iface.remove_all_network_profiles()
+    iface.add_network_profile(profile)
 
-# Detener el punto de acceso (ejecutar este comando cuando necesites detener la red)
-# detener_punto_acceso(ssid)
+    # Conectar al punto de acceso
+    iface.connect(profile)
+    print(f"Punto de acceso '{ssid}' configurado.")
+    time.sleep(5)  # Esperar un poco para estabilizar la conexión
+
+if __name__ == "__main__":
+    ssid = "MiRedWiFi"
+    password = "pepe1234"
+    configurar_punto_acceso(ssid, password)
