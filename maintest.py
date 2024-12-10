@@ -35,11 +35,6 @@ def main():
         hilo_wireshark.start()
         hilo_base_de_datos.start()
 
-        # Esperar a que ambos hilos terminen
-        hilo_red.join()
-        hilo_servidor.join()
-        hilo_wireshark.join()
-        hilo_base_de_datos.join()
 
     except KeyboardInterrupt:
         print("\nInterrupción detectada. Cerrando los procesos...")
