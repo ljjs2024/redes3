@@ -1,7 +1,6 @@
 import socket
 import struct
 
-# Lista para almacenar los paquetes
 paquetes_capturados = []
 
 def obtener_mac(bytes_direccion):
@@ -10,7 +9,6 @@ def obtener_mac(bytes_direccion):
     return direccion_mac
 
 def analizar_paquete(raw_data):
-    # Decodificar la cabecera Ethernet
     dest_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
     print('\nEthernet Frame:')
     print(f'Dest MAC: {dest_mac}, Src MAC: {src_mac}, Protocol: {eth_proto}')
@@ -24,9 +22,8 @@ def ethernet_frame(data):
     return dest_mac, src_mac, proto, data[14:]
 
 def main():
-    INTERFAZ_RED = 'eth0'  # Cambiar según el caso (e.g., wlan0 para Wi-Fi)
+    INTERFAZ_RED = 'wlp0s20f3'  #interfaz Wi-Fi
 
-    # Crear un socket sin procesar (raw) y vincularlo a la interfaz de red
     try:
         conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
         conn.bind((INTERFAZ_RED, 0))
@@ -48,7 +45,6 @@ def main():
     except Exception as e:
         print(f"Ocurrió un error durante la captura de paquetes: {e}")
 
-    # Guardar los paquetes capturados en un archivo
     try:
         with open('captura_trafico.bin', 'wb') as f:
             for paquete in paquetes_capturados:

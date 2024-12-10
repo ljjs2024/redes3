@@ -32,14 +32,14 @@ def main():
         hilo_red = threading.Thread(target=ejecutar_red)
         hilo_servidorudp= threading.Thread(target=ejecutar_servidorudp)
         hilo_servidortcp = threading.Thread(target=ejecutar_servidortcp)
-        #hilo_wireshark = threading.Thread(target=ejecutar_wireshark)
-        #hilo_base_de_datos = threading.Thread(target=ejecutar_base_de_datos)
+        hilo_wireshark = threading.Thread(target=ejecutar_wireshark)
+        hilo_base_de_datos = threading.Thread(target=ejecutar_base_de_datos)
 
         # Iniciar los hilos
         hilo_red.start()
         hilo_servidorudp.start()
         hilo_servidortcp.start()
-        #hilo_wireshark.start()
+        hilo_wireshark.start()
         #hilo_base_de_datos.start()
 
 

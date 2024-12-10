@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  red:
+    build:
+      context: . 
+    container_name: red_service
+    network_mode: "host" 
+    cap_add:
+      - NET_ADMIN
+    stdin_open: true
+    tty: true
+

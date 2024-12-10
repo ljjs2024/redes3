@@ -16,7 +16,7 @@ def conectar_postgres(db_name):
             host=os.getenv("DB_HOST", "localhost"),
             database=db_name,
             user=os.getenv("DB_USER", "postgres"),
-            password=os.getenv("DB_PASSWORD", "tu_contraseña")
+            password=os.getenv("DB_PASSWORD", "pepe1234")
         )
         conexion.autocommit = True
         return conexion
@@ -24,10 +24,11 @@ def conectar_postgres(db_name):
         logging.error(f"Error al conectar a PostgreSQL: {e}")
         return None
 
-def crear_base_de_datos(cursor, nombre_bd):
+def crear_base_de_datos(conexion, nombre_bd):
     try:
-        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(nombre_bd)))
-        logging.info(f"Base de datos '{nombre_bd}' creada exitosamente.")
+        with conexion.cursor() as cursor:
+            cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(nombre_bd)))
+            logging.info(f"Base de datos '{nombre_bd}' creada exitosamente.")
     except psycopg2.errors.DuplicateDatabase:
         logging.warning(f"La base de datos '{nombre_bd}' ya existe.")
     except Exception as e:
@@ -105,25 +106,29 @@ def registrar_evento(cursor, descripcion, dispositivo_id=None, tipo_evento=None)
 
 def main():
     db_name = os.getenv("DB_NAME", "red_raspberry")  # Base de datos configurable
+
+    # Conexión inicial para verificar/crear la base de datos
+    conexion_inicial = conectar_postgres("postgres")
+    if conexion_inicial:
+        crear_base_de_datos(conexion_inicial, db_name)
+        conexion_inicial.close()
+
+    # Conexión a la base de datos principal
     conexion = conectar_postgres(db_name)
     if conexion:
-        cursor = conexion.cursor()
+        try:
+            with conexion.cursor() as cursor:
+                crear_tablas(cursor)
 
-        crear_base_de_datos(cursor, db_name)
-        conexion.close()
-
-        conexion = conectar_postgres(db_name)
-        cursor = conexion.cursor()
-        crear_tablas(cursor)
-
-        dispositivo_id = registrar_dispositivo(cursor, "Sensor1", "192.168.0.10")
-        if dispositivo_id:
-            registrar_evento(cursor, "Conexión establecida", dispositivo_id, "conexión")
-            registrar_paquete(cursor, dispositivo_id, "Datos válidos de temperatura", "TCP", True)
-            registrar_evento(cursor, "Desconexión del dispositivo", dispositivo_id, "desconexión")
-
-        cursor.close()
-        conexion.close()
+                dispositivo_id = registrar_dispositivo(cursor, "Sensor1", "192.168.0.9")
+                if dispositivo_id:
+                    registrar_evento(cursor, "Conexión establecida", dispositivo_id, "conexión")
+                    registrar_paquete(cursor, dispositivo_id, "Datos válidos de temperatura", "TCP", True)
+                    registrar_evento(cursor, "Desconexión del dispositivo", dispositivo_id, "desconexión")
+        except Exception as e:
+            logging.error(f"Error durante las operaciones: {e}")
+        finally:
+            conexion.close()
 
 if __name__ == "__main__":
     main()
