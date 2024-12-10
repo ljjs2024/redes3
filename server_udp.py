@@ -2,7 +2,7 @@ import socket
 import hashlib
 from datetime import datetime, timedelta
 
-udp_port = 5001  # Puerto UDP
+udp_port = 5000  # Puerto UDP
 baneados = {}  # Diccionario de las direcciones IP baneadas y tiempos de ban
 errores_por_cliente = {}  # Diccionario para rastrear errores por dirección IP
 MAX_CONEXIONES = 3
