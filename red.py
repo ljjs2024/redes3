@@ -9,7 +9,7 @@ def crear_punto_acceso(ssid, password, interfaz):
     try:
         # Crear el punto de acceso usando nmcli
         subprocess.run(
-            ["sudo", "nmcli", "dev", "wifi", "hotspot", 
+            [ "nmcli", "dev", "wifi", "hotspot", 
              "ifname", interfaz, 
              "ssid", ssid, 
              "password", password], 
